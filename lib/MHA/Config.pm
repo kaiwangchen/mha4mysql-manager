@@ -31,7 +31,7 @@ use MHA::NodeUtil;
 use MHA::ManagerConst;
 
 my @PARAM_ARRAY =
-  qw/ hostname ip port ssh_host ssh_ip ssh_port ssh_connection_timeout ssh_options node_label candidate_master no_master ignore_fail skip_init_ssh_check skip_reset_slave user password repl_user repl_password disable_log_bin master_pid_file handle_raw_binlog ssh_user remote_workdir master_binlog_dir log_level manager_workdir manager_log check_repl_delay check_repl_filter latest_priority multi_tier_slave ping_interval ping_type secondary_check_script master_ip_failover_script master_ip_online_change_script shutdown_script report_script init_conf_load_script /;
+  qw/ hostname ip port ssh_host ssh_ip ssh_port ssh_connection_timeout ssh_options node_label candidate_master no_master ignore_fail skip_init_ssh_check skip_reset_slave user password repl_user repl_password disable_log_bin master_pid_file handle_raw_binlog ssh_user remote_workdir master_binlog_dir log_level manager_workdir manager_log check_repl_delay check_repl_filter latest_priority multi_tier_slave ping_interval ping_type secondary_check_script master_ip_failover_script master_ip_online_change_script shutdown_script report_script init_conf_load_script basedir defaults_file no_defaults/;
 my %PARAM;
 for (@PARAM_ARRAY) { $PARAM{$_} = 1; }
 
@@ -275,6 +275,24 @@ sub parse_server {
     $value{ping_interval} = 3 if ( !defined( $value{ping_interval} ) );
   }
   check_positive_int( "ping_interval", $value{ping_interval} );
+
+  $value{basedir} = $param_arg->{basedir};
+  if ( !defined( $value{basedir} ) ) {
+    $value{basedir} = $default->{basedir};
+  }
+
+  $value{defaults_file} = $param_arg->{defaults_file};
+  $value{no_defaults}   = $param_arg->{no_defaults};
+  if ( defined( $value{defaults_file} ) && defined( $value{no_defaults} ) ) {
+    croak "defaults_file conflicts with no_defaults in the same scope\n";
+  }
+  elsif ( !defined( $value{defaults_file} ) || !defined( $value{no_defaults} ) ) {
+    $value{defaults_file} = $default->{defaults_file};
+    $value{no_defaults} = $default->{no_defaults};
+  }
+  else {
+    # ignore the other regardless of any default
+  }
 
   my $server = new MHA::Server();
   foreach my $key ( keys(%PARAM) ) {

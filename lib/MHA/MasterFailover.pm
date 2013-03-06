@@ -634,6 +634,16 @@ sub find_slave_with_all_relay_logs {
       $latest_slave->{ssh_user} . '@' . $latest_slave->{ssh_ip};
     my $command =
 "apply_diff_relay_logs --command=find --latest_mlf=$latest_slave->{Master_Log_File} --latest_rmlp=$latest_slave->{Read_Master_Log_Pos} --target_mlf=$oldest_master_log_file --target_rmlp=$oldest_master_log_pos --server_id=$latest_slave->{server_id} --workdir=$latest_slave->{remote_workdir} --timestamp=$_start_datetime --manager_version=$MHA::ManagerConst::VERSION";
+    if ( $latest_slave->{basedir} ) {
+      $command .= " --basedir=$latest_slave->{basedir}";
+    }
+    if ( $latest_slave->{no_defaults} ) {
+      $command .= " --no_defaults";
+    }
+    elsif ( $latest_slave->{defaults_file} ) {
+      $command .= " --defaults-file=$latest_slave->{defaults_file}";
+    }
+
     if ( $latest_slave->{relay_log_info_type} eq "TABLE" ) {
       $command .=
 " --relay_dir=$latest_slave->{relay_dir} --current_relay_log=$latest_slave->{current_relay_log} ";
@@ -853,6 +863,16 @@ sub generate_diff_from_readpos {
   );
   my $command =
 "apply_diff_relay_logs --command=generate_and_send --scp_user=$target->{ssh_user} --scp_host=$target->{ssh_ip} --latest_mlf=$latest_slave->{Master_Log_File} --latest_rmlp=$latest_slave->{Read_Master_Log_Pos} --target_mlf=$target->{Master_Log_File} --target_rmlp=$target->{Read_Master_Log_Pos} --server_id=$latest_slave->{server_id} --diff_file_readtolatest=$target->{diff_file_readtolatest} --workdir=$latest_slave->{remote_workdir} --timestamp=$_start_datetime --handle_raw_binlog=$target->{handle_raw_binlog} --disable_log_bin=$target->{disable_log_bin} --manager_version=$MHA::ManagerConst::VERSION";
+  if ( $latest_slave->{basedir} ) {
+    $command .= " --basedir=$latest_slave->{basedir}";
+  }
+  if ( $latest_slave->{no_defaults} ) {
+    $command .= " --no_defaults";
+  }
+  elsif ( $latest_slave->{defaults_file} ) {
+    $command .= " --defaults-file=$latest_slave->{defaults_file}";
+  }
+
   if ( $target->{ssh_port} ne 22 ) {
     $command .= " --scp_port=$target->{ssh_port}";
   }
@@ -1139,6 +1159,16 @@ sub apply_diff {
   );
   my $command =
 "apply_diff_relay_logs --command=apply --slave_user=$target->{escaped_user} --slave_host=$target->{hostname} --slave_ip=$target->{ip}  --slave_port=$target->{port} --apply_files=$diff_files --workdir=$target->{remote_workdir} --target_version=$target->{mysql_version} --timestamp=$_start_datetime --handle_raw_binlog=$target->{handle_raw_binlog} --disable_log_bin=$target->{disable_log_bin} --manager_version=$MHA::ManagerConst::VERSION";
+  if ( $target->{basedir} ) {
+    $command .= " --basedir=$target->{basedir}";
+  }
+  if ( $target->{no_defaults} ) {
+    $command .= " --no_defaults";
+  }
+  elsif ( $target->{defaults_file} ) {
+    $command .= " --defaults-file=$target->{defaults_file}";
+  }
+
   if ( $target->{log_level} eq "debug" ) {
     $command .= " --debug ";
   }
