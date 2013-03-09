@@ -534,6 +534,15 @@ sub save_master_binlog_internal {
     my $oldest_version = $_server_manager->get_oldest_version();
     $command .= " --oldest_version=$oldest_version ";
   }
+  if ( $dead_master->{basedir} ) {
+    $command .= " --basedir=$dead_master->{basedir}";
+  }
+  if ( $dead_master->{no_defaults} ) {
+    $command .= " --no_defaults";
+  }
+  elsif ( $dead_master->{defaults_file} ) {
+    $command .= " --defaults-file=$dead_master->{defaults_file}";
+  }
   if ( $dead_master->{log_level} eq "debug" ) {
     $command .= " --debug ";
   }
@@ -1070,6 +1079,15 @@ sub gen_diff_from_exec_to_read {
 
     my $command =
 "save_binary_logs --command=save --start_file=$target->{Relay_Log_File}  --start_pos=$target->{Relay_Log_Pos} --output_file=$target->{relay_from_exectoread} --handle_raw_binlog=$target->{handle_raw_binlog} --disable_log_bin=$target->{disable_log_bin} --manager_version=$MHA::ManagerConst::VERSION";
+    if ( $target->{basedir} ) {
+      $command .= " --basedir=$target->{basedir}";
+    }
+    if ( $target->{no_defaults} ) {
+      $command .= " --no_defaults";
+    }
+    elsif ( $target->{defaults_file} ) {
+      $command .= " --defaults-file=$target->{defaults_file}";
+    }
     if ( $target->{relay_log_info_type} eq "TABLE" ) {
       $command .= " --binlog_dir=$target->{relay_dir} ";
     }
