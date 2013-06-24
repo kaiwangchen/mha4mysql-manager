@@ -1,6 +1,6 @@
 Summary: Master High Availability Manager and Tools for MySQL, Manager Package
 Name: mha4mysql-manager
-Version: 0.55
+Version: 0.551
 Release: 0%{?dist}
 License: GPL v2
 Vendor: DeNA Co.,Ltd.
@@ -12,7 +12,7 @@ BuildRequires: perl(ExtUtils::MakeMaker) >= 6.30
 Requires: perl(Config::Tiny)
 Requires: perl(Log::Dispatch)
 Requires: perl(Parallel::ForkManager)
-Requires: mha4mysql-node >= 0.54
+Requires: mha4mysql-node >= 0.551
 Source0: mha4mysql-manager-%{version}.tar.gz
 
 %description
