@@ -22,7 +22,7 @@ Source0: mha4mysql-manager-%{version}.tar.gz
 %setup -q -n mha4mysql-manager-%{version}
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" %{__perl} Makefile.PL INSTALLDIRS="vendor" INSTALLVENDORLIB=%{?perl_install_vendor_lib}
+CFLAGS="$RPM_OPT_FLAGS" %{__perl} Makefile.PL INSTALLDIRS="vendor" INSTALLVENDORLIB=%(perl -MConfig -le 'print $Config{vendorlib}')
 make %{?_smp_mflags} OPTIMIZE="$RPM_OPT_FLAGS"
 
 %install
